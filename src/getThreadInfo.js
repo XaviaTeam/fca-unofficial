@@ -21,7 +21,7 @@ function formatEventReminders(reminder) {
     secondsToNotifyBefore: reminder.seconds_to_notify_before,
     allowsRsvp: reminder.allows_rsvp,
     relatedEvent: reminder.related_event,
-    members: reminder.event_reminder_members.edges.map(function(member) {
+    members: reminder.event_reminder_members.edges.map(function (member) {
       return {
         memberID: member.node.id,
         state: member.guest_list_state.toLowerCase()
@@ -40,10 +40,10 @@ function formatThreadGraphQLResponse(data) {
   var lastM = messageThread.last_message;
   var snippetID =
     lastM &&
-    lastM.nodes &&
-    lastM.nodes[0] &&
-    lastM.nodes[0].message_sender &&
-    lastM.nodes[0].message_sender.messaging_actor
+      lastM.nodes &&
+      lastM.nodes[0] &&
+      lastM.nodes[0].message_sender &&
+      lastM.nodes[0].message_sender.messaging_actor
       ? lastM.nodes[0].message_sender.messaging_actor.id
       : null;
   var snippetText =
@@ -64,7 +64,7 @@ function formatThreadGraphQLResponse(data) {
       firstName: d.node.messaging_actor.short_name,
       vanity: d.node.messaging_actor.username,
       thumbSrc: d.node.messaging_actor.big_image_src.uri,
-      profileUrl: d.node.messaging_actor.big_image_src.uri,
+      profileUrl: d.node.messaging_actor.url,
       gender: d.node.messaging_actor.gender,
       type: d.node.messaging_actor.__typename,
       isFriend: d.node.messaging_actor.is_viewer_friend,
@@ -87,19 +87,19 @@ function formatThreadGraphQLResponse(data) {
       : null,
     color:
       messageThread.customization_info &&
-      messageThread.customization_info.outgoing_bubble_color
+        messageThread.customization_info.outgoing_bubble_color
         ? messageThread.customization_info.outgoing_bubble_color.slice(2)
         : null,
     nicknames:
       messageThread.customization_info &&
-      messageThread.customization_info.participant_customizations
+        messageThread.customization_info.participant_customizations
         ? messageThread.customization_info.participant_customizations.reduce(
-            function(res, val) {
-              if (val.nickname) res[val.participant_id] = val.nickname;
-              return res;
-            },
-            {}
-          )
+          function (res, val) {
+            if (val.nickname) res[val.participant_id] = val.nickname;
+            return res;
+          },
+          {}
+        )
         : {},
     adminIDs: messageThread.thread_admins,
     approvalMode: Boolean(messageThread.approval_mode),
@@ -138,10 +138,10 @@ function formatThreadGraphQLResponse(data) {
   };
 }
 
-module.exports = function(defaultFuncs, api, ctx) {
+module.exports = function (defaultFuncs, api, ctx) {
   return function getThreadInfoGraphQL(threadID, callback) {
-    var resolveFunc = function(){};
-    var rejectFunc = function(){};
+    var resolveFunc = function () { };
+    var rejectFunc = function () { };
     var returnPromise = new Promise(function (resolve, reject) {
       resolveFunc = resolve;
       rejectFunc = reject;
@@ -178,7 +178,7 @@ module.exports = function(defaultFuncs, api, ctx) {
     defaultFuncs
       .post("https://www.facebook.com/api/graphqlbatch/", ctx.jar, form)
       .then(utils.parseAndCheckLogin(ctx, defaultFuncs))
-      .then(function(resData) {
+      .then(function (resData) {
         if (resData.error) {
           throw resData;
         }
@@ -191,7 +191,7 @@ module.exports = function(defaultFuncs, api, ctx) {
 
         callback(null, formatThreadGraphQLResponse(resData[0]));
       })
-      .catch(function(err) {
+      .catch(function (err) {
         log.error("getThreadInfoGraphQL", err);
         return callback(err);
       });

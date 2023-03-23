@@ -12,6 +12,9 @@ log.maxRecordSize = defaultLogRecordSize;
 function setOptions(globalOptions, options) {
   Object.keys(options).map(function (key) {
     switch (key) {
+      case 'pauseLog':
+        if (options.pauseLog) log.pause();
+        break;
       case 'online':
         globalOptions.online = Boolean(options.online);
         break;
@@ -198,6 +201,7 @@ function buildAPI(globalOptions, html, jar) {
     'setTitle',
     'threadColors',
     'unsendMessage',
+    'unfriend',
 
     // HTTP
     'httpGet',
@@ -565,7 +569,7 @@ function login(loginData, options, callback) {
 
   var globalOptions = {
     selfListen: false,
-    listenEvents: false,
+    listenEvents: true,
     listenTyping: false,
     updatePresence: false,
     forceLogin: false,

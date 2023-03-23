@@ -683,6 +683,8 @@ function formatDeltaMessage(m) {
   var m_offset = mdata.map(u => u.o);
   var m_length = mdata.map(u => u.l);
   var mentions = {};
+  var body = m.delta.body || "";
+  var args = body == "" ? [] : body.trim().split(/\s+/);
   for (var i = 0; i < m_id.length; i++) {
     mentions[m_id[i]] = m.delta.body.substring(
       m_offset[i],
@@ -693,15 +695,17 @@ function formatDeltaMessage(m) {
   return {
     type: "message",
     senderID: formatID(md.actorFbId.toString()),
-    body: m.delta.body || "",
     threadID: formatID(
       (md.threadKey.threadFbId || md.threadKey.otherUserFbId).toString()
     ),
+    args: args,
+    body: body,
     messageID: md.messageId,
     attachments: (m.delta.attachments || []).map(v => _formatAttachment(v)),
     mentions: mentions,
     timestamp: md.timestamp,
-    isGroup: !!md.threadKey.threadFbId
+    isGroup: !!md.threadKey.threadFbId,
+    participantIDs: m.delta.participants || []
   };
 }
 
@@ -797,10 +801,19 @@ function getAdminTextMessageType(type) {
   switch (type) {
     case "change_thread_theme":
       return "log:thread-color";
-    case "change_thread_nickname":
-      return "log:user-nickname";
     case "change_thread_icon":
       return "log:thread-icon";
+    case "change_thread_nickname":
+      return "log:user-nickname";
+    case "change_thread_admins":
+      return "log:thread-admins";
+    case "group_poll":
+      return "log:thread-poll";
+    case "change_thread_approval_mode":
+      return "log:thread-approval-mode";
+    case "messenger_call_log":
+    case "participant_joined_group_call":
+      return "log:thread-call";
     default:
       return type;
   }
@@ -819,8 +832,8 @@ function formatDeltaEvent(m) {
 
   switch (m.class) {
     case "AdminTextMessage":
-      logMessageData = m.untypedData;
       logMessageType = getAdminTextMessageType(m.type);
+      logMessageData = m.untypedData;
       break;
     case "ThreadName":
       logMessageType = "log:thread-name";
@@ -847,7 +860,8 @@ function formatDeltaEvent(m) {
     logMessageType: logMessageType,
     logMessageData: logMessageData,
     logMessageBody: m.messageMetadata.adminText,
-    author: m.messageMetadata.actorFbId
+    author: m.messageMetadata.actorFbId,
+    participantIDs: m.participants || []
   };
 }
 
@@ -1289,7 +1303,7 @@ function formatProxyPresence(presence, userID) {
   return {
     type: "presence",
     timestamp: presence.lat * 1000,
-    userID: userID,
+    userID: userID || '',
     statuses: presence.p
   };
 }
@@ -1298,7 +1312,7 @@ function formatPresence(presence, userID) {
   return {
     type: "presence",
     timestamp: presence.la * 1000,
-    userID: userID,
+    userID: userID || '',
     statuses: presence.a
   };
 }
@@ -1307,7 +1321,41 @@ function decodeClientPayload(payload) {
   /*
   Special function which Client using to "encode" clients JSON payload
   */
-  return JSON.parse(String.fromCharCode.apply(null, payload));
+  function Utf8ArrayToStr(array) {
+    var out, i, len, c;
+    var char2, char3;
+    out = "";
+    len = array.length;
+    i = 0;
+    while (i < len) {
+      c = array[i++];
+      switch (c >> 4) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+          out += String.fromCharCode(c);
+          break;
+        case 12:
+        case 13:
+          char2 = array[i++];
+          out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+          break;
+        case 14:
+          char2 = array[i++];
+          char3 = array[i++];
+          out += String.fromCharCode(((c & 0x0F) << 12) | ((char2 & 0x3F) << 6) | ((char3 & 0x3F) << 0));
+          break;
+      }
+    }
+    return out;
+  }
+
+  return JSON.parse(Utf8ArrayToStr(payload));
 }
 
 function getAppState(jar) {

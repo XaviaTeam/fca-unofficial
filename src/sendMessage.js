@@ -183,22 +183,10 @@ module.exports = function (defaultFuncs, api, ctx) {
     if (utils.getType(threadID) === "Array") {
       sendContent(form, threadID, false, messageAndOTID, callback);
     } else {
-      if (utils.getType(isGroup) != "Boolean") {
-        api.getUserInfo(threadID, function (err, res) {
-          if (err) {
-            return callback(err);
-          }
-          sendContent(
-            form,
-            threadID,
-            Object.keys(res).length > 0,
-            messageAndOTID,
-            callback
-          );
-        });
-      } else {
+      if (utils.getType(isGroup) != "Boolean")
+        sendContent(form, threadID, threadID.length <= 15, messageAndOTID, callback);
+      else
         sendContent(form, threadID, !isGroup, messageAndOTID, callback);
-      }
     }
   }
 
@@ -342,8 +330,8 @@ module.exports = function (defaultFuncs, api, ctx) {
       callback = function () { };
     }
 
-    var resolveFunc = function(){};
-    var rejectFunc = function(){};
+    var resolveFunc = function () { };
+    var rejectFunc = function () { };
     var returnPromise = new Promise(function (resolve, reject) {
       resolveFunc = resolve;
       rejectFunc = reject;

@@ -1,9 +1,8 @@
 This repo is a fork from main repo and will usually have new features bundled faster than main repo (and maybe bundle some bugs, too).
 
 # Unofficial Facebook Chat API
-<a href="https://www.npmjs.com/package/fca-unofficial"><img alt="npm version" src="https://img.shields.io/npm/v/fca-unofficial.svg?style=flat-square"></a>
-<img alt="version" src="https://img.shields.io/github/package-json/v/fca-unofficial/fca-unofficial?label=github&style=flat-square">
-<a href="https://www.npmjs.com/package/fca-unofficial"><img src="https://img.shields.io/npm/dm/fca-unofficial.svg?style=flat-square" alt="npm downloads"></a>
+<a href="https://www.npmjs.com/package/@xaviabot/fca-unofficial"><img alt="npm version" src="https://img.shields.io/npm/v/@xaviabot/fca-unofficial.svg?style=flat-square"></a>
+<a href="https://www.npmjs.com/package/@xaviabot/fca-unofficial"><img src="https://img.shields.io/npm/dm/@xaviabot/fca-unofficial.svg?style=flat-square" alt="npm downloads"></a>
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 Facebook now has an official API for chat bots [here](https://developers.facebook.com/docs/messenger-platform).
@@ -17,16 +16,16 @@ See [below](#projects-using-this-api) for projects using this API.
 See the [full changelog](/CHANGELOG.md) for release details.
 
 ## Install
-If you just want to use fca-unofficial, you should use this command:
+If you just want to use @xaviabot/fca-unofficial, you should use this command:
 ```bash
-npm install fca-unofficial
+npm install @xaviabot/fca-unofficial
 ```
-It will download `fca-unofficial` from NPM repositories
+It will download @xaviabot/fca-unofficial from NPM repositories
 
 ### Bleeding edge
 If you want to use bleeding edge (directly from github) to test new features or submit bug report, this is the command for you:
 ```bash
-npm install fca-unofficial/fca-unofficial
+npm install XaviaTeam/fca-unofficial
 ```
 
 ## Testing your bots
@@ -34,13 +33,13 @@ If you want to test your bots without creating another account on Facebook, you 
 
 ## Example Usage
 ```javascript
-const login = require("fca-unofficial");
+const login = require("@xaviabot/fca-unofficial");
 
 // Create simple echo bot
 login({email: "FB_EMAIL", password: "FB_PASSWORD"}, (err, api) => {
     if(err) return console.error(err);
 
-    api.listen((err, message) => {
+    api.listenMqtt((err, message) => {
         api.sendMessage(message.body, message.threadID);
     });
 });
@@ -53,7 +52,44 @@ Result:
 
 ## Documentation
 
-You can see it [here](DOCS.md).
+* [`login`](DOCS.md#login)
+* [`api.addUserToGroup`](DOCS.md#addUserToGroup)
+* [`api.changeAdminStatus`](DOCS.md#changeAdminStatus)
+* [`api.changeArchivedStatus`](DOCS.md#changeArchivedStatus)
+* [`api.changeBlockedStatus`](DOCS.md#changeBlockedStatus)
+* [`api.changeGroupImage`](DOCS.md#changeGroupImage)
+* [`api.changeNickname`](DOCS.md#changeNickname)
+* [`api.changeThreadColor`](DOCS.md#changeThreadColor)
+* [`api.changeThreadEmoji`](DOCS.md#changeThreadEmoji)
+* [`api.createPoll`](DOCS.md#createPoll)
+* [`api.deleteMessage`](DOCS.md#deleteMessage)
+* [`api.deleteThread`](DOCS.md#deleteThread)
+* [`api.forwardAttachment`](DOCS.md#forwardAttachment)
+* [`api.getAppState`](DOCS.md#getAppState)
+* [`api.getCurrentUserID`](DOCS.md#getCurrentUserID)
+* [`api.getFriendsList`](DOCS.md#getFriendsList)
+* [`api.getThreadHistory`](DOCS.md#getThreadHistory)
+* [`api.getThreadInfo`](DOCS.md#getThreadInfo)
+* [`api.getThreadList`](DOCS.md#getThreadList)
+* [`api.getThreadPictures`](DOCS.md#getThreadPictures)
+* [`api.getUserID`](DOCS.md#getUserID)
+* [`api.getUserInfo`](DOCS.md#getUserInfo)
+* [`api.handleMessageRequest`](DOCS.md#handleMessageRequest)
+* [`api.listen`](DOCS.md#listen)
+* [`api.listenMqtt`](DOCS.md#listenMqtt)
+* [`api.logout`](DOCS.md#logout)
+* [`api.markAsRead`](DOCS.md#markAsRead)
+* [`api.markAsReadAll`](DOCS.md#markAsReadAll)
+* [`api.muteThread`](DOCS.md#muteThread)
+* [`api.removeUserFromGroup`](DOCS.md#removeUserFromGroup)
+* [`api.resolvePhotoUrl`](DOCS.md#resolvePhotoUrl)
+* [`api.searchForThread`](DOCS.md#searchForThread)
+* [`api.sendMessage`](DOCS.md#sendMessage)
+* [`api.sendTypingIndicator`](DOCS.md#sendTypingIndicator)
+* [`api.setMessageReaction`](DOCS.md#setMessageReaction)
+* [`api.setOptions`](DOCS.md#setOptions)
+* [`api.setTitle`](DOCS.md#setTitle)
+* [`api.unsendMessage`](DOCS.md#unsendMessage)
 
 ## Main Functionality
 
@@ -73,7 +109,7 @@ __Tip__: to find your own ID, you can look inside the cookies. The `userID` is u
 
 __Example (Basic Message)__
 ```js
-const login = require("fca-unofficial");
+const login = require("@xaviabot/fca-unofficial");
 
 login({email: "FB_EMAIL", password: "FB_PASSWORD"}, (err, api) => {
     if(err) return console.error(err);
@@ -86,7 +122,7 @@ login({email: "FB_EMAIL", password: "FB_PASSWORD"}, (err, api) => {
 
 __Example (File upload)__
 ```js
-const login = require("fca-unofficial");
+const login = require("@xaviabot/fca-unofficial");
 
 login({email: "FB_EMAIL", password: "FB_PASSWORD"}, (err, api) => {
     if(err) return console.error(err);
@@ -110,7 +146,7 @@ __Example__
 
 ```js
 const fs = require("fs");
-const login = require("fca-unofficial");
+const login = require("@xaviabot/fca-unofficial");
 
 var credentials = {email: "FB_EMAIL", password: "FB_PASSWORD"};
 
@@ -134,7 +170,7 @@ __Example__
 
 ```js
 const fs = require("fs");
-const login = require("fca-unofficial");
+const login = require("@xaviabot/fca-unofficial");
 
 // Simple echo bot. It will repeat everything that you say.
 // Will stop when you say '/stop'
