@@ -582,7 +582,7 @@ function login(loginData, options, callback) {
     userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/600.3.18 (KHTML, like Gecko) Version/8.0.3 Safari/600.3.18"
   };
 
-  setOptions(globalOptions, options);
+  setOptions(globalOptions, options || {});
 
   var prCallback = null;
   if (utils.getType(callback) !== "Function" && utils.getType(callback) !== "AsyncFunction") {
