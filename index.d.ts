@@ -42,6 +42,25 @@ declare module '@xaviabot/fca-unofficial' {
         appState: Cookie[]
     }
 
+    export type MessageObject = {
+        body: string,
+        sticker?: string,
+        attachment?: ReadableStream | ReadableStream[],
+        url?: string,
+        emoji?: string,
+        emojiSize?: string,
+        mentions?: {
+            tag: string,
+            id: string,
+            fromIndex?: number
+        }[],
+        location?: {
+            latitude: number,
+            longitude: number,
+            current?: boolean
+        }
+    }
+
     export type IFCAU_API = {
         addUserToGroup: (userID: string, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         changeAdminStatus: (threadID: string, adminIDs: string | string[], adminStatus: boolean, callback?: (err?: Error) => void) => Promise<void>,
@@ -81,24 +100,7 @@ declare module '@xaviabot/fca-unofficial' {
         removeUserFromGroup: (userID: string, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         resolvePhotoUrl: (photoID: string, callback?: (err: Error | null, url: string) => void) => Promise<string>,
         sendMessage: (
-            message: string | {
-                body: string,
-                sticker?: string,
-                attachment?: ReadableStream | ReadableStream[],
-                url?: string,
-                emoji?: string,
-                emojiSize?: string,
-                mentions?: {
-                    tag: string,
-                    id: string,
-                    fromIndex?: number
-                }[],
-                location?: {
-                    latitude: number,
-                    longitude: number,
-                    current?: boolean
-                }
-            },
+            message: string | MessageObject,
             threadID: string | string[],
             callback?: (err?: Error, data?: { threadID: string, messageID: string, timestamp: number }) => void,
             replyMessageID?: string,
