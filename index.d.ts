@@ -61,6 +61,20 @@ declare module '@xaviabot/fca-unofficial' {
         }
     }
 
+    function sendMessage(
+        message: string | MessageObject,
+        threadID: string | string[],
+        callback?: (err?: Error, data?: { threadID: string, messageID: string, timestamp: number }) => void,
+        replyMessageID?: string,
+        isGroup?: boolean
+    ): Promise<{ threadID: string, messageID: string, timestamp: number }>;
+    function sendMessage(
+        message: string | MessageObject,
+        threadID: string | string[],
+        replyMessageID?: string,
+        isGroup?: boolean
+    ): Promise<{ threadID: string, messageID: string, timestamp: number }>;
+
     export type IFCAU_API = {
         addUserToGroup: (userID: string, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         changeAdminStatus: (threadID: string, adminIDs: string | string[], adminStatus: boolean, callback?: (err?: Error) => void) => Promise<void>,
@@ -99,13 +113,7 @@ declare module '@xaviabot/fca-unofficial' {
         muteThread: (threadID: string, muteSeconds: number, callback?: (err?: Error) => void) => Promise<void>,
         removeUserFromGroup: (userID: string, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         resolvePhotoUrl: (photoID: string, callback?: (err: Error | null, url: string) => void) => Promise<string>,
-        sendMessage: (
-            message: string | MessageObject,
-            threadID: string | string[],
-            callback?: (err?: Error, data?: { threadID: string, messageID: string, timestamp: number }) => void,
-            replyMessageID?: string,
-            isGroup?: boolean
-        ) => Promise<{ threadID: string, messageID: string, timestamp: number }>,
+        sendMessage: typeof sendMessage,
         sendTypingIndicator: (threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         setMessageReaction: (reaction: string, messageID: string, callback?: (err?: Error) => void, forceCustomReaction?: boolean) => Promise<void>,
         setOptions: (options: Partial<IFCAU_Options>) => void,
