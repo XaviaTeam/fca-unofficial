@@ -126,6 +126,7 @@ declare module '@xaviabot/fca-unofficial' {
             type: "message",
             attachments: IFCAU_Attachment[],
             body: string,
+            args: string[],
             isGroup: boolean,
             mentions: { [id: string]: string },
             messageID: string,
@@ -182,6 +183,7 @@ declare module '@xaviabot/fca-unofficial' {
             type: "message_reply"
             attachments: IFCAU_Attachment[],
             body: string,
+            args: string[],
             isGroup: boolean,
             mentions: { [id: string]: string },
             messageID: string,
