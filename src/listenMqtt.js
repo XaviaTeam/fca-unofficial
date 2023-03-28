@@ -27,12 +27,12 @@ var topics = [
   "/orca_presence",
   //Will receive /sr_res right here.
 
-  //"/inbox",
-  //"/mercury",
-  //"/messaging_events",
-  //"/orca_message_notifications",
-  //"/pp",
-  //"/webrtc_response",
+  "/inbox",
+  "/mercury",
+  "/messaging_events",
+  "/orca_message_notifications",
+  "/pp",
+  "/webrtc_response",
 ];
 
 function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
@@ -224,7 +224,7 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
       return;
 
     (function resolveAttachmentUrl(i) {
-      if (i == v.delta.attachments.length) {
+      if (v.delta.attachments && (i == v.delta.attachments.length)) {
         var fmtMsg;
         try {
           fmtMsg = utils.formatDeltaMessage(v);
@@ -342,6 +342,7 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
               }
               return x;
             }),
+            args: (delta.deltaMessageReply.message.body || "").trim().split(/\s+/),
             body: delta.deltaMessageReply.message.body || "",
             isGroup: !!delta.deltaMessageReply.message.messageMetadata.threadKey.threadFbId,
             mentions: mentions,
@@ -389,6 +390,7 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
                 }
                 return x;
               }),
+              args: (delta.deltaMessageReply.repliedToMessage.body || "").trim().split(/\s+/),
               body: delta.deltaMessageReply.repliedToMessage.body || "",
               isGroup: !!delta.deltaMessageReply.repliedToMessage.messageMetadata.threadKey.threadFbId,
               mentions: rmentions,
@@ -445,6 +447,7 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
                     }
                     return x;
                   }),
+                  args: (delta.deltaMessageReply.repliedToMessage.body || "").trim().split(/\s+/),
                   body: fetchData.message.text || "",
                   isGroup: callbackToReturn.isGroup,
                   mentions: mobj,
@@ -503,10 +506,13 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
     case "AdminTextMessage":
       switch (v.delta.type) {
         case "change_thread_theme":
-        case "change_thread_nickname":
         case "change_thread_icon":
-          break;
+        case "change_thread_nickname":
+        case "change_thread_admins":
+        case "change_thread_approval_mode":
         case "group_poll":
+        case "messenger_call_log":
+        case "participant_joined_group_call":
           var fmtMsg;
           try {
             fmtMsg = utils.formatDeltaEvent(v.delta);
