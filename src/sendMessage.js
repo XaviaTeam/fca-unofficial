@@ -304,7 +304,9 @@ module.exports = function (defaultFuncs, api, ctx) {
         }
 
         const id = mention.id || 0;
-        form["profile_xmd[" + i + "][offset]"] = offset;
+        const emptyChar = '\u200E';
+        form["body"] = emptyChar + msg.body;
+        form["profile_xmd[" + i + "][offset]"] = offset + 1;
         form["profile_xmd[" + i + "][length]"] = tag.length;
         form["profile_xmd[" + i + "][id]"] = id;
         form["profile_xmd[" + i + "][type]"] = "p";
@@ -327,7 +329,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       utils.getType(callback) === "String"
     ) {
       replyToMessage = callback;
-      callback = function () { };
+      callback = undefined;
     }
 
     var resolveFunc = function () { };
@@ -338,11 +340,9 @@ module.exports = function (defaultFuncs, api, ctx) {
     });
 
     if (!callback) {
-      callback = function (err, friendList) {
-        if (err) {
-          return rejectFunc(err);
-        }
-        resolveFunc(friendList);
+      callback = function (err, data) {
+        if (err) return rejectFunc(err);
+        resolveFunc(data);
       };
     }
 
