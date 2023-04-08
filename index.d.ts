@@ -139,7 +139,7 @@ declare module '@xaviabot/fca-unofficial' {
             author: string,
             logMessageBody: string,
             logMessageData: any,
-            logMessageType: string,
+            logMessageType: "log:thread-name" | "log:subscribe" | "log:unsubscribe" | "log:thread-color" | "log:thread-icon" | "log:user-nickname" | "log:thread-admins" | "log:thread-poll" | "log:thread-approval-mode" | "log:thread-call",
             threadID: string
         } |
         {
