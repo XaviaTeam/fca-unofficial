@@ -237,7 +237,10 @@ declare module '@xaviabot/fca-unofficial' {
             previewHeight: number,
             largePreviewUrl: string,
             largePreviewWidth: number,
-            largePreviewHeight: number
+            largePreviewHeight: number,
+            url: string,
+            width: number,
+            height: number
         } |
         {
             type: "animated_image",
