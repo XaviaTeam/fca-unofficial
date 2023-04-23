@@ -132,7 +132,23 @@ declare module '@xaviabot/fca-unofficial' {
             messageID: string,
             senderID: string,
             threadID: string,
-            isUnread: boolean
+            isUnread: boolean,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
+            logMessageData: {
+                image: {
+                    attachmentID: string,
+                    width: number,
+                    height: number,
+                    url: string
+                }
+            },
+            logMessageType: "log:thread-image",
+            threadID: string
         } |
         {
             type: "event",
@@ -140,7 +156,8 @@ declare module '@xaviabot/fca-unofficial' {
             logMessageBody: string,
             logMessageData: any,
             logMessageType: "log:thread-name" | "log:subscribe" | "log:unsubscribe" | "log:thread-color" | "log:thread-icon" | "log:user-nickname" | "log:thread-admins" | "log:thread-poll" | "log:thread-approval-mode" | "log:thread-call",
-            threadID: string
+            threadID: string,
+            participantIDs: string[]
         } |
         {
             type: "typ",
@@ -190,6 +207,7 @@ declare module '@xaviabot/fca-unofficial' {
             senderID: string,
             threadID: string,
             isUnread: boolean,
+            participantIDs: string[],
             messageReply: {
                 attachments: IFCAU_Attachment[],
                 body: string,

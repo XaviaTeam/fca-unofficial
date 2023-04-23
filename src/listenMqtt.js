@@ -344,9 +344,10 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
             }),
             args: (delta.deltaMessageReply.message.body || "").trim().split(/\s+/),
             body: delta.deltaMessageReply.message.body || "",
-            isGroup: !!delta.deltaMessageReply.message.messageMetadata.threadKey.threadFbId,
             mentions: mentions,
             timestamp: delta.deltaMessageReply.message.messageMetadata.timestamp,
+            isGroup: !!delta.deltaMessageReply.message.messageMetadata.threadKey.threadFbId,
+            participantIDs: delta.deltaMessageReply.message.participants.map(u => u.toString()),
           };
 
           if (delta.deltaMessageReply.repliedToMessage) {
@@ -506,7 +507,8 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
     case "AdminTextMessage":
       switch (v.delta.type) {
         case "change_thread_theme":
-        case "change_thread_icon":
+        // case "change_thread_icon":  deprecated
+        case "change_thread_quick_reaction":
         case "change_thread_nickname":
         case "change_thread_admins":
         case "change_thread_approval_mode":
@@ -575,17 +577,20 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
                     undefined :
                     (function () {
                       globalCallback(null, {
-                        type: "change_thread_image",
+                        type: "event",
                         threadID: utils.formatID(tid.toString()),
-                        snippet: fetchData.snippet,
+                        logMessageType: "log:thread-image",
+                        logMessageData: {
+                          image: {
+                            attachmentID: fetchData.image_with_metadata && fetchData.image_with_metadata.legacy_attachment_id,
+                            width: fetchData.image_with_metadata && fetchData.image_with_metadata.original_dimensions.x,
+                            height: fetchData.image_with_metadata && fetchData.image_with_metadata.original_dimensions.y,
+                            url: fetchData.image_with_metadata && fetchData.image_with_metadata.preview.uri
+                          }
+                        },
+                        logMessageBody: fetchData.snippet,
                         timestamp: fetchData.timestamp_precise,
                         author: fetchData.message_sender.id,
-                        image: {
-                          attachmentID: fetchData.image_with_metadata && fetchData.image_with_metadata.legacy_attachment_id,
-                          width: fetchData.image_with_metadata && fetchData.image_with_metadata.original_dimensions.x,
-                          height: fetchData.image_with_metadata && fetchData.image_with_metadata.original_dimensions.y,
-                          url: fetchData.image_with_metadata && fetchData.image_with_metadata.preview.uri
-                        }
                       });
                     })();
                   break;
