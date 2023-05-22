@@ -83,7 +83,7 @@ declare module '@xaviabot/fca-unofficial' {
         changeGroupImage: (image: ReadableStream, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         changeNickname: (nickname: string, threadID: string, pariticipantID: string, callback?: (err?: Error) => void) => Promise<void>,
         changeThreadColor: (color: string, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
-        changeThreadEmoji: (emoji: string, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
+        changeThreadEmoji: (emoji: string | null, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         createNewGroup: (participantIDs: string[], groupTitle?: string, callback?: (err: Error, threadID: string) => void) => Promise<string>,
         createPoll: (title: string, threadID: string, options?: { [item: string]: boolean }, callback?: (err?: Error) => void) => Promise<void>,
         deleteMessage: (messageOrMessages: string | string[], callback?: (err?: Error) => void) => Promise<void>,
@@ -517,7 +517,7 @@ declare module '@xaviabot/fca-unofficial' {
         cannotReplyReason: string | null,
         lastReadTimestamp: number,
         emoji: string | null,
-        color: string,
+        color: string | null,
         adminIDs: string[],
         approvalMode: string,
         approvalQueue: { inviterID: string, requesterID: string, timestamp: string }[]
