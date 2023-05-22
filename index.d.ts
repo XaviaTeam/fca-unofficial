@@ -450,7 +450,7 @@ declare module '@xaviabot/fca-unofficial' {
         vanity: string | null,
         thumbSrc: string,
         profileUrl: string,
-        gender: string,
+        gender: number,
         type: string,
         isFriend: boolean,
         isBirthday: boolean,
