@@ -78,12 +78,13 @@ declare module '@xaviabot/fca-unofficial' {
     export type IFCAU_API = {
         addUserToGroup: (userID: string, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         changeAdminStatus: (threadID: string, adminIDs: string | string[], adminStatus: boolean, callback?: (err?: Error) => void) => Promise<void>,
+				changeApprovalMode: (approvalMode: 0 | 1, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         changeArchivedStatus: (threadOrThreads: string | string[], archive: boolean, callback?: (err?: Error) => void) => Promise<void>,
         changeBlockedStatus: (userID: string, blocked: boolean, callback?: (err?: Error) => void) => Promise<void>,
         changeGroupImage: (image: ReadableStream, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         changeNickname: (nickname: string, threadID: string, pariticipantID: string, callback?: (err?: Error) => void) => Promise<void>,
         changeThreadColor: (color: string, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
-        changeThreadEmoji: (emoji: string, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
+        changeThreadEmoji: (emoji: string | null, threadID: string, callback?: (err?: Error) => void) => Promise<void>,
         createNewGroup: (participantIDs: string[], groupTitle?: string, callback?: (err: Error, threadID: string) => void) => Promise<string>,
         createPoll: (title: string, threadID: string, options?: { [item: string]: boolean }, callback?: (err?: Error) => void) => Promise<void>,
         deleteMessage: (messageOrMessages: string | string[], callback?: (err?: Error) => void) => Promise<void>,
@@ -154,8 +155,131 @@ declare module '@xaviabot/fca-unofficial' {
             type: "event",
             author: string,
             logMessageBody: string,
+            logMessageData: {
+                addedParticipants: {
+                    fanoutPolicy: string,
+                    firstName: string,
+                    fullName: string,
+                    groupJoinStatus: string,
+                    initialFolder: string,
+                    initialFolderId: {
+                        systemFolderId: string,
+                    },
+                    lastUnsubscribeTimestampMs: string,
+                    userFbId: string,
+                    isMessengerUser: boolean
+                }[],
+            },
+            logMessageType: "log:subscribe",
+            threadID: string,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
+            logMessageData: { leftParticipantFbId: string },
+            logMessageType: "log:unsubscribe",
+            threadID: string,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
+            logMessageData: { name: string },
+            logMessageType: "log:thread-name",
+            threadID: string,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
+            logMessageData: {
+                theme_color: string,
+                gradient?: string,
+                should_show_icon: string,
+                theme_id: string,
+                accessibility_label: string,
+                theme_name_with_subtitle: string,
+                theme_emoji?: string
+            },
+            logMessageType: "log:thread-color",
+            threadID: string,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
+            logMessageData: {
+                thread_quick_reaction_instruction_key_id: string,
+                thread_quick_reaction_emoji: string,
+                thread_quick_reaction_emoji_url: string
+            },
+            logMessageType: "log:thread-icon",
+            threadID: string,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
+            logMessageData: {
+                nickname: string,
+                participant_id: string
+            },
+            logMessageType: "log:user-nickname",
+            threadID: string,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
+            logMessageData: {
+                THREAD_CATEGORY: string,
+                TARGET_ID: string,
+                ADMIN_TYPE: string,
+                ADMIN_EVENT: 'add_admin' | 'remove_admin'
+            },
+            logMessageType: "log:thread-admins",
+            threadID: string,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
+            logMessageData: {
+                removed_option_ids: string,
+                question_json: string,
+                event_type: 'question_creation' | 'update_vote' | 'add_unvoted_option' | 'multiple_updates',
+                added_option_ids: string,
+                new_option_texts: string,
+                new_option_ids: string,
+                question_id: string,
+            },
+            logMessageType: "log:thread-poll",
+            threadID: string,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
+            logMessageData: { APPROVAL_MODE: '0' | '1', THREAD_CATEGORY: string },
+            logMessageType: "log:thread-approval-mode",
+            threadID: string,
+            participantIDs: string[]
+        } |
+        {
+            type: "event",
+            author: string,
+            logMessageBody: string,
             logMessageData: any,
-            logMessageType: "log:thread-name" | "log:subscribe" | "log:unsubscribe" | "log:thread-color" | "log:thread-icon" | "log:user-nickname" | "log:thread-admins" | "log:thread-poll" | "log:thread-approval-mode" | "log:thread-call",
+            logMessageType: "log:thread-call",
             threadID: string,
             participantIDs: string[]
         } |
@@ -327,7 +451,7 @@ declare module '@xaviabot/fca-unofficial' {
         vanity: string | null,
         thumbSrc: string,
         profileUrl: string,
-        gender: string,
+        gender: number,
         type: string,
         isFriend: boolean,
         isBirthday: boolean,
@@ -394,7 +518,7 @@ declare module '@xaviabot/fca-unofficial' {
         cannotReplyReason: string | null,
         lastReadTimestamp: number,
         emoji: string | null,
-        color: string,
+        color: string | null,
         adminIDs: string[],
         approvalMode: string,
         approvalQueue: { inviterID: string, requesterID: string, timestamp: string }[]
