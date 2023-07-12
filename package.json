@@ -24,7 +24,7 @@
   "license": "MIT",
   "dependencies": {
     "bluebird": "^2.11.0",
-    "cheerio": "^0.22.0",
+    "cheerio": "^1.0.0-rc.12",
     "https-proxy-agent": "^4.0.0",
     "mqtt": "^3.0.0",
     "npmlog": "^1.2.0",
