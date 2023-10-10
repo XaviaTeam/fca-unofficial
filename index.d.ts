@@ -513,14 +513,14 @@ declare module '@xaviabot/fca-unofficial' {
         muteUntil: number | null,
         isGroup: boolean,
         isSubscribed: boolean,
-        folder: 'inbox' | 'archive' | string,
+        folder: 'INBOX' | 'ARCHIVE' | string,
         isArchived: boolean,
         cannotReplyReason: string | null,
         lastReadTimestamp: number,
         emoji: string | null,
         color: string | null,
         adminIDs: string[],
-        approvalMode: string,
+        approvalMode: boolean,
         approvalQueue: { inviterID: string, requesterID: string, timestamp: string }[]
     }
 
