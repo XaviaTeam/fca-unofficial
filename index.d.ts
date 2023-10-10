@@ -447,16 +447,16 @@ declare module '@xaviabot/fca-unofficial' {
 
     export type IFCAU_User = {
         name: string,
-        firstName: string,
-        vanity: string | null,
+        firstName?: string,
+        vanity?: string,
         thumbSrc: string,
-        profileUrl: string,
-        gender: number,
+        profileUrl: string | null,
+        gender?: number,
         type: string,
-        isFriend: boolean,
+        isFriend?: boolean,
         isBirthday: boolean,
         searchToken: any,
-        alternateName: string
+        alternateName?: string
     }
 
     export type IFCAU_UserIDResponse = {
