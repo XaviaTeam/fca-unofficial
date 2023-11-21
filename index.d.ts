@@ -302,13 +302,12 @@ declare module '@xaviabot/fca-unofficial' {
             time: number
         } | {
             type: "message_reaction",
+            threadID: string,
             messageID: string,
-            offlineThreadingID: string,
             reaction: string,
             senderID: string,
-            threadID: string,
-            timestamp: number,
-            userID: string
+            userID: string,
+            reactionTimestamp: number
         } | {
             type: "presence",
             statuses: number,
