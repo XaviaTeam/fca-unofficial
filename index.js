@@ -82,10 +82,13 @@ function setOptions(globalOptions, options) {
 
 function buildAPI(globalOptions, html, jar) {
     var maybeCookie = jar
-        .getCookies("https://www.facebook.com")
-        .filter(function(val) {
-            return val.cookieString().split("=")[0] === "c_user";
-        });
+        .getCookies("https://www.facebook.com");
+
+    if (maybeCookie.some((val) => val.cookieString().split("=")[0] === "i_user")) {
+        maybeCookie = [maybeCookie.find((val) => val.cookieString().split("=")[0] === "i_user")];
+    } else {
+        maybeCookie = maybeCookie.filter((val) => val.cookieString().split("=")[0] === "c_user");
+    }
 
     if (maybeCookie.length === 0) {
         throw {
