@@ -8,7 +8,7 @@ function getCurrentEpochTimestamp() {
 };
 
 module.exports = function (defaultFuncs, api, ctx) {
-  const mqttClient = ctx.mqttClient;
+  var mqttClient = ctx.mqttClient;
   var currentRequestID = requestCounter++;
 
   return function editMessage(messageID, text, callback) {
@@ -27,7 +27,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         resolveFunc();
       };
     }
-    console.log(Object.keys(ctx.mqttClient));
+    console.log(mqttClient));
     var payloadToSend = {
       "app_id": "2220391788200892",
       "payload": {
