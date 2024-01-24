@@ -50,7 +50,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       "type": 3
     };
 
-    mqttClient.publish('ls_req', JSON.stringify(payloadToSend), {
+    ctx.mqttClient.publish('ls_req', JSON.stringify(payloadToSend), {
       qos: 1,
       retain: false,
     });
