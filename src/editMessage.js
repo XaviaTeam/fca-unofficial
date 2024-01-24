@@ -27,7 +27,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         resolveFunc();
       };
     }
-
+    console.log(Object.keys(ctx));
     var payloadToSend = {
       "app_id": "2220391788200892",
       "payload": {
@@ -50,7 +50,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       "type": 3
     };
 
-    mqttClient.publish('ls_req', JSON.stringify(payloadToSend), {
+    mqttClient.send('ls_req', JSON.stringify(payloadToSend), {
       qos: 1,
       retain: false,
     });
