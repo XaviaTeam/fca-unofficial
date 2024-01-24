@@ -1,3 +1,5 @@
+"use_strict";
+
 var requestCounter = 1; // Initialize the counter
 
 // Function to get the current epoch timestamp
