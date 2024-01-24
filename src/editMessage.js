@@ -10,7 +10,7 @@ function getCurrentEpochTimestamp() {
 module.exports = function (defaultFuncs, api, ctx) {
   const mqttClient = ctx.mqttClient;
    var currentRequestID = requestCounter++;
-
+   return function editMessage(messageID, text, callback) {
     var payloadToSend = {
         "app_id": "2220391788200892",
         "payload": {
@@ -18,7 +18,7 @@ module.exports = function (defaultFuncs, api, ctx) {
                 {
                     "label": "742",
                     "payload": {
-                        "message_id": message_id,
+                        "message_id": messageID,
                         "text": text
                     },
                     "queue_name": "edit_message",
@@ -32,4 +32,9 @@ module.exports = function (defaultFuncs, api, ctx) {
         "request_id": currentRequestID,
         "type": 3 // Assuming this field remains constant for this type of request
     };
+       mqttClient.publish('ls_req', JSON.stringify(payloadToSend), {
+        qos: 1,
+        retain: false,
+    });
+   }
 }
