@@ -27,7 +27,6 @@ module.exports = function (defaultFuncs, api, ctx) {
         resolveFunc();
       };
     }
-    console.log(mqttClient);
     var payloadToSend = {
       "app_id": "2220391788200892",
       "payload": {
