@@ -7,11 +7,6 @@ module.exports = function (defaultFuncs, api, ctx) {
       throw new Error('Not connected to MQTT');
     }
 
-    const mqttClient = ctx.mqttClient;
-
-    if (!mqttClient) {
-      throw new Error('Not connected to MQTT');
-    }
 
     ctx.wsReqNumber += 1;
     ctx.wsTaskNumber += 1;
@@ -48,6 +43,6 @@ module.exports = function (defaultFuncs, api, ctx) {
       ctx.reqCallbacks[ctx.wsReqNumber] = callback;
     }
 
-    mqttClient.publish('/ls_req', JSON.stringify(content), { qos: 1, retain: false });
+    ctx.mqttClient.publish('/ls_req', JSON.stringify(content), { qos: 1, retain: false });
   };
 }
