@@ -1,5 +1,24 @@
 "use_strict";
 
+
+function isCallable(func) {
+  try {
+    Reflect.apply(func, null, []);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+function generateOfflineThreadingId() {
+  const ret = Math.floor(Date.now());
+  const value = Math.floor(Math.random() * 4294967296); // 2^32
+  const binaryStr = value.toString(2).slice(-22);
+  const msgs = (ret).toString(2) + binaryStr;
+
+  return parseInt(msgs, 2).toString();
+}
+
 module.exports = function (defaultFuncs, api, ctx) {
 
   return function editMessage(messageID, text, callback) {
