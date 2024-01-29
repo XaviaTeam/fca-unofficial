@@ -181,6 +181,8 @@ function buildAPI(globalOptions, html, jar) {
         lastSeqId: irisSeqID,
         syncToken: undefined,
         mqttEndpoint,
+        ws_task_number: 0,
+        ws_req_number: 0,
         region,
         firstListen: true,
     };
