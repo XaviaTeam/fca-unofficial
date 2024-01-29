@@ -1,66 +1,53 @@
 "use_strict";
 
-var requestCounter = 1; // Initialize the counter
-
-// Function to get the current epoch timestamp
-function getCurrentEpochTimestamp() {
-    return Math.floor(new Date().getTime() / 1000); // Convert milliseconds to seconds
-};
-
 module.exports = function (defaultFuncs, api, ctx) {
-  var mqttClient = ctx.mqttClient;
-  var currentRequestID = requestCounter++;
 
   return function editMessage(messageID, text, callback) {
-    var resolveFunc = function () {};
-    var rejectFunc = function () {};
-    var returnPromise = new Promise(function (resolve, reject) {
-      resolveFunc = resolve;
-      rejectFunc = reject;
-    });
-
-    if (!callback) {
-      callback = function (err) {
-        if (err) {
-          return rejectFunc(err);
-        }
-        resolveFunc();
-      };
+    if (!ctx.mqttClient) {
+      throw new Error('Not connected to MQTT');
     }
-    var payloadToSend = {
-      "app_id": "2220391788200892",
-      "payload": {
-        "tasks": [
-          {
-            "label": "742",
-            "payload": {
-              "message_id": messageID,
-              "text": text
-            },
-            "queue_name": "edit_message",
-            "task_id": currentRequestID,
-            "failure_count": null
-          }
-        ],
-        "epoch_id": getCurrentEpochTimestamp(),
-        "version_id": "7849679408382587"
-      },
-      "request_id": currentRequestID,
-      "type": 3
+
+    const mqttClient = ctx.mqttClient;
+
+    if (!mqttClient) {
+      throw new Error('Not connected to MQTT');
+    }
+
+    ctx.wsReqNumber += 1;
+    ctx.wsTaskNumber += 1;
+
+    const taskPayload = {
+      message_id: messageID,
+      text: text,
     };
 
-    ctx.mqttClient.publish('/ls_req', JSON.stringify(payloadToSend), {
-      qos: 1,
-      retain: false,
-    });
+    const task = {
+      failure_count: null,
+      label: '742',
+      payload: JSON.stringify(taskPayload),
+      queue_name: 'edit_message',
+      task_id: ctx.wsTaskNumber,
+    };
 
-    returnPromise
-      .then(function () {
-        callback(); // Resolve the promise when the operation is successful
-      })
-      .catch(function (err) {
-        callback(err); // Reject the promise if there's an error
-      });
+    const content = {
+      app_id: '2220391788200892',
+      payload: {
+        data_trace_id: null,
+        epoch_id: parseInt(generateOfflineThreadingId()),
+        tasks: [],
+        version_id: '6903494529735864',
+      },
+      request_id: ctx.wsReqNumber,
+      type: 3,
+    };
+
+    content.payload.tasks.push(task);
+    content.payload = JSON.stringify(content.payload);
+
+    if (isCallable(callback)) {
+      ctx.reqCallbacks[ctx.wsReqNumber] = callback;
+    }
+
+    mqttClient.publish('/ls_req', JSON.stringify(content), { qos: 1, retain: false });
   };
-};
-
+}
