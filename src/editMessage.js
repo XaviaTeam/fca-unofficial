@@ -1,5 +1,7 @@
 "use_strict";
+
 const { generateOfflineThreadingID } = require('../utils');
+
 function isCallable(func) {
   try {
     Reflect.apply(func, null, []);
