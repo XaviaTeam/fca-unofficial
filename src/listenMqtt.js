@@ -335,7 +335,7 @@ function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {
                             senderID: delta.deltaRecallMessageData.senderID.toString(),
                             deletionTimestamp:
                                 delta.deltaRecallMessageData.deletionTimestamp,
-                            timestamp: delta.deltaRecallMessageData.timestamp,
+                            timestamp: delta.deltaRecallMessageData.messageTimestamp,
                         });
                     })();
                 } else if (delta.deltaMessageReply) {
