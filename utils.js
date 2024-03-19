@@ -120,6 +120,12 @@ function generateThreadingID(clientID) {
   return "<" + k + ":" + l + "-" + m + "@mail.projektitan.com>";
 }
 
+function getCurrentTimestamp() {
+  const date = new Date();
+  const unixTime = date.getTime();
+  return unixTime;
+}
+
 function binaryToDecimal(data) {
   var ret = "";
   while (data !== "0") {
@@ -1403,6 +1409,7 @@ module.exports = {
   decodeClientPayload,
   getAppState,
   getAdminTextMessageType,
-  setProxy
+  setProxy,
+  getCurrentTimestamp
 };
 
