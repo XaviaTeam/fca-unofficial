@@ -244,6 +244,9 @@ function buildAPI(globalOptions, html, jar) {
         "unsendMessage",
         "unfriend",
         "editMessage",
+        "setMessageReactionMqtt",
+        "pinMessage",
+        "forwardMessage",
 
         // HTTP
         "httpGet",

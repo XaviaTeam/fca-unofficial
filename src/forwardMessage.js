@@ -12,7 +12,7 @@ function isCallable(func) {
 }
 
 module.exports = function (defaultFuncs, api, ctx) {
-  return function createPoll(title, options, threadID, callback) {
+  return function forwardMessage(messageID, threadID, callback) {
     if (!ctx.mqttClient) {
       throw new Error('Not connected to MQTT');
     }
@@ -21,17 +21,21 @@ module.exports = function (defaultFuncs, api, ctx) {
     ctx.wsTaskNumber += 1;
 
     const taskPayload = {
-      question_text: title,
-      thread_key: threadID,
-      options: options,
+      thread_id: threadID,
+      otid: parseInt(generateOfflineThreadingID()),
+      source: 65544,
+      send_type: 5,
       sync_group: 1,
+      forwarded_msg_id: messageID,
+      strip_forwarded_msg_caption: 0,
+      initiating_source: 1,
     };
 
     const task = {
       failure_count: null,
-      label: '163',
+      label: '46',
       payload: JSON.stringify(taskPayload),
-      queue_name: 'poll_creation',
+      queue_name: `${threadID}`,
       task_id: ctx.wsTaskNumber,
     };
 
@@ -41,7 +45,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         data_trace_id: null,
         epoch_id: parseInt(generateOfflineThreadingID()),
         tasks: [task],
-        version_id: '7158486590867448',
+        version_id: '25095469420099952',
       }),
       request_id: ctx.wsReqNumber,
       type: 3,

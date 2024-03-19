@@ -12,7 +12,7 @@ function isCallable(func) {
 }
 
 module.exports = function (defaultFuncs, api, ctx) {
-  return function createPoll(title, options, threadID, callback) {
+  return function setMessageReactionMqtt(reaction, messageID, threadID, callback) {
     if (!ctx.mqttClient) {
       throw new Error('Not connected to MQTT');
     }
@@ -21,17 +21,21 @@ module.exports = function (defaultFuncs, api, ctx) {
     ctx.wsTaskNumber += 1;
 
     const taskPayload = {
-      question_text: title,
       thread_key: threadID,
-      options: options,
+      timestamp_ms: getCurrentTimestamp(),
+      message_id: messageID,
+      reaction: reaction,
+      actor_id: ctx.userID,
+      reaction_style: null,
       sync_group: 1,
+      send_attribution: Math.random() < 0.5 ? 65537 : 524289
     };
 
     const task = {
       failure_count: null,
-      label: '163',
+      label: '29',
       payload: JSON.stringify(taskPayload),
-      queue_name: 'poll_creation',
+      queue_name: JSON.stringify(['reaction', messageID]),
       task_id: ctx.wsTaskNumber,
     };
 

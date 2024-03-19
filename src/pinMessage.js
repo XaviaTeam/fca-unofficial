@@ -12,7 +12,7 @@ function isCallable(func) {
 }
 
 module.exports = function (defaultFuncs, api, ctx) {
-  return function createPoll(title, options, threadID, callback) {
+  return function pinMessage(pinMode, messageID, threadID, callback) {
     if (!ctx.mqttClient) {
       throw new Error('Not connected to MQTT');
     }
@@ -20,18 +20,20 @@ module.exports = function (defaultFuncs, api, ctx) {
     ctx.wsReqNumber += 1;
     ctx.wsTaskNumber += 1;
 
+    const taskLabel = pinMode ? '430' : '431';
+    const queueNamePrefix = pinMode ? 'pin_msg_v2_' : 'unpin_msg_v2_';
+
     const taskPayload = {
-      question_text: title,
       thread_key: threadID,
-      options: options,
-      sync_group: 1,
+      message_id: messageID,
+      timestamp_ms: getCurrentTimestamp(),
     };
 
     const task = {
       failure_count: null,
-      label: '163',
+      label: taskLabel,
       payload: JSON.stringify(taskPayload),
-      queue_name: 'poll_creation',
+      queue_name: `${queueNamePrefix}${threadID}`,
       task_id: ctx.wsTaskNumber,
     };
 
@@ -41,7 +43,7 @@ module.exports = function (defaultFuncs, api, ctx) {
         data_trace_id: null,
         epoch_id: parseInt(generateOfflineThreadingID()),
         tasks: [task],
-        version_id: '7158486590867448',
+        version_id: '25095469420099952',
       }),
       request_id: ctx.wsReqNumber,
       type: 3,
