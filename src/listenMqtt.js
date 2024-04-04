@@ -41,6 +41,8 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
     var chatOn = ctx.globalOptions.online;
     var foreground = false;
 
+    ctx["tasks"].clear(); // Clear tasks
+
     var sessionID = Math.floor(Math.random() * 9007199254740991) + 1;
     var username = {
         u: ctx.userID,
@@ -227,6 +229,26 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
                     })();
                 }
             }
+        } else if (topic == "/ls_resp") {
+            const parsedPayload = JSON.parse(jsonMessage.payload);
+            const reqID = jsonMessage.request_id;
+            if (ctx["tasks"].has(reqID)) {
+                const taskData = ctx["tasks"].get(reqID);
+                const { type: taskType, callback: taskCallback } = taskData;
+                const taskRespData = getTaskResponseData(taskType, parsedPayload);
+
+                if (taskRespData == null) {
+                    taskCallback("error", null);
+                } else {
+                    console.log("ls_resp", taskType, taskRespData);
+                    taskCallback(null, {
+                        "type": taskType,
+                        "reqID": reqID,
+                        ...taskRespData
+                    });
+                }
+
+            }
         }
     });
 
@@ -234,6 +256,25 @@ function listenMqtt(defaultFuncs, api, ctx, globalCallback) {
         //(function () { globalCallback("Connection closed."); })();
         // client.end();
     });
+}
+
+function getTaskResponseData(taskType, payload) {
+    try {
+        switch (taskType) {
+            case "set_message_reaction": {
+                return {
+                    "mid": payload.step[1][2][2][1][4],
+                };
+            }
+            case "edit_message": {
+                return {
+                    "mid": payload.step[1][2][2][1][2],
+                };
+            }
+        }
+    } catch (error) {
+        return null
+    }
 }
 
 function parseDelta(defaultFuncs, api, ctx, globalCallback, v) {

@@ -18,7 +18,7 @@ module.exports = function (defaultFuncs, api, ctx) {
     }
 
     ctx.wsReqNumber += 1;
-    ctx.wsTaskNumber += 1;
+    let taskNumber = ++ctx.wsTaskNumber;
 
     const taskPayload = {
       thread_key: threadID,
@@ -36,7 +36,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       label: '29',
       payload: JSON.stringify(taskPayload),
       queue_name: JSON.stringify(['reaction', messageID]),
-      task_id: ctx.wsTaskNumber,
+      task_id: taskNumber,
     };
 
     const content = {
@@ -52,9 +52,11 @@ module.exports = function (defaultFuncs, api, ctx) {
     };
 
     if (isCallable(callback)) {
-      ctx.reqCallbacks[ctx.wsReqNumber] = callback;
+      ctx["tasks"].set(taskNumber, {
+        type: 'set_message_reaction',
+        callback: callback
+      });
     }
-
     ctx.mqttClient.publish('/ls_req', JSON.stringify(content), { qos: 1, retain: false });
   };
 };

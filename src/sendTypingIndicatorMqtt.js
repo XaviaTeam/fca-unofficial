@@ -46,7 +46,7 @@ module.exports = function (defaultFuncs, api, ctx) {
       };
 
       if (isCallable(callback)) {
-        ctx.reqCallbacks[ctx.wsReqNumber] = callback;
+        // to be implemented
       }
 
       ctx.mqttClient.publish('/ls_req', JSON.stringify(content), { qos: 1, retain: false });

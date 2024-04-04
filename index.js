@@ -185,7 +185,7 @@ function buildAPI(globalOptions, html, jar) {
         wsTaskNumber: 0,
         region,
         firstListen: true,
-        reqCallbacks: {},
+        tasks: new Map(),
     };
 
     var api = {
